@@ -44,8 +44,8 @@ class Price {
 public:
     Price() = default;
 
-    double value;
-    std::string currency;
+    double value = 0;
+    std::string currency = "";
 
     friend std::istream &operator>>(std::istream &is, Price &price) {
         std::string str;
