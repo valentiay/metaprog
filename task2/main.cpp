@@ -12,10 +12,12 @@ struct TypeList {
 
 template<class List, class A>
 struct Append;
+
 template<class A>
 struct Append<Nil, A> {
     typedef TypeList<A, Nil> result;
 };
+
 template<class Head, class Tail, class A>
 struct Append<TypeList<Head, Tail>, A> {
     typedef TypeList<Head, typename Append<Tail, A>::result> result;
@@ -27,6 +29,7 @@ template<class A = Nil, class B = Nil, class C = Nil, class D = Nil>
 struct MakeTypeList {
     typedef TypeList<A, typename MakeTypeList<B, C, D>::result> result;
 };
+
 template<>
 struct MakeTypeList<Nil, Nil> {
     typedef Nil result;
@@ -39,10 +42,12 @@ struct Array;
 
 template<class Array>
 struct Increment;
+
 template<int Head, class Tail>
 struct Increment<Array<Head, Tail> > {
     typedef Array<Head + 1, typename Increment<Tail>::result> result;
 };
+
 template<>
 struct Increment<Nil> {
     typedef Nil result;
@@ -50,44 +55,19 @@ struct Increment<Nil> {
 
 /*----------------------------------------------------------------------------*/
 
-template<class Array>
-struct Length;
-template<int Head, class Tail>
-struct Length<Array<Head, Tail> > {
-    enum {
-        result = Length<Tail>::result + 1
-    };
-};
-template<>
-struct Length<Nil> {
-    enum {
-        result = 0
-    };
-};
-
-/*----------------------------------------------------------------------------*/
-
-template<class Array, int Index>
-struct Get;
-template<int Head, class Tail, int Index>
-struct Get<Array<Head, Tail>, Index> {
-    enum {
-        result = (Index == 0) ? Head : Get<Tail, Index - 1>::result
-    };
-};
-
-/*----------------------------------------------------------------------------*/
-
 template<class List, class A>
 struct GetIndexOf;
+
 template<class A>
 struct GetIndexOf<Nil, A> {
     typedef Nil result;
 };
+
 template<class Tail, class A>
 struct GetIndexOf<TypeList<A, Tail>, A> {
     typedef Array<0, typename Increment<typename GetIndexOf<Tail, A>::result>::result> result;
 };
+
 template<class Head, class Tail, class A>
 struct GetIndexOf<TypeList<Head, Tail>, A> {
     typedef typename Increment<typename GetIndexOf<Tail, A>::result>::result result;
@@ -112,6 +92,8 @@ struct PrintArray<Nil> {
         std::cout << "Nil" << std::endl;
     }
 };
+
+/*----------------------------------------------------------------------------*/
 
 int main() {
     typedef TypeList<int, Nil> list1;
