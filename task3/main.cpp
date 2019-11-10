@@ -6,6 +6,18 @@ struct NullType {
 template<class Head, class Tail>
 struct Typelist {};
 
+template<typename ...Args>
+struct MkTypelist
+{
+    typedef NullType Result;
+};
+
+template<typename H, typename ...T>
+struct MkTypelist<H, T...>
+{
+    typedef Typelist<H, typename MkTypelist<T...>::Result> Result;
+};
+
 template<class TList, template<class> class Unit>
 class GenScatterHierarchy;
 
@@ -41,9 +53,14 @@ struct Holder {
     T value;
 };
 
-struct Bar {};
+struct Bar {
+    friend std::ostream&operator<<(std::ostream& os, Bar bar) {
+        os << "Bar!";
+        return os;
+    }
+};
 
-typedef GenScatterHierarchy<Typelist<int, std::string/*, Bar*/>, Holder> WidgetInfo;
+typedef GenScatterHierarchy<MkTypelist<int, std::string, Bar>::Result, Holder> WidgetInfo;
 
 template<class T, class H>
 typename H::template Rebind<T>::Result &Field(H &obj) {
@@ -52,8 +69,12 @@ typename H::template Rebind<T>::Result &Field(H &obj) {
 
 int main() {
     WidgetInfo obj;
-    int name = static_cast<Holder<int> &>(obj).value;
-    std::cout << "\"" << name << "\"";
-    std::cout << Field<int>(obj).value;
+    Bar bar;
+    Field<int>(obj).value = 1234;
+    Field<std::string>(obj).value = "Hello!";
+    Field<Bar>(obj).value = bar;
+    std::cout << Field<int>(obj).value << std::endl;
+    std::cout << Field<std::string>(obj).value << std::endl;
+    std::cout << Field<Bar>(obj).value << std::endl;
     return 0;
 }
