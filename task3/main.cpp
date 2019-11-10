@@ -60,7 +60,7 @@ struct Bar {
     }
 };
 
-typedef GenScatterHierarchy<MkTypelist<int, std::string, Bar>::Result, Holder> WidgetInfo;
+typedef GenScatterHierarchy<MkTypelist<int, std::string, Bar>::Result, Holder> Foo;
 
 template<class T, class H>
 typename H::template Rebind<T>::Result &Field(H &obj) {
@@ -68,13 +68,16 @@ typename H::template Rebind<T>::Result &Field(H &obj) {
 }
 
 int main() {
-    WidgetInfo obj;
+    Foo obj;
     Bar bar;
+
     Field<int>(obj).value = 1234;
     Field<std::string>(obj).value = "Hello!";
     Field<Bar>(obj).value = bar;
+
     std::cout << Field<int>(obj).value << std::endl;
     std::cout << Field<std::string>(obj).value << std::endl;
     std::cout << Field<Bar>(obj).value << std::endl;
+
     return 0;
 }
